@@ -1,109 +1,1288 @@
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f3f4f6;
+/* Prevent ALL SVG icons from intercepting click events on parent buttons */
+button svg, button svg * {
+    pointer-events: none !important;
 }
 
-/* Tampilan Tabel Kalender Umum */
-.calendar-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
-}
-.calendar-table th, .calendar-table td {
-    border: 1px solid #cbd5e1;
-    text-align: center;
-    vertical-align: top;
-}
-.calendar-table th {
-    background-color: #e2e8f0;
-    font-weight: 600;
-}
-.weekend { 
-    color: #ef4444; /* Merah untuk hari libur Sabtu & Minggu */
-    font-weight: 600; 
+/* ========== Original Styles ========== */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Mengamankan logo PNG transparan agar menyatu dengan latar belakang */
+        .logo-transparent {
+            background: transparent !important;
+        }
+        /* Mengatasi masalah print terpotong atau gagal karena Tailwind hidden */
+        #print-area {
+            display: none;
+        }
+        @media print {
+            /* Sembunyikan elemen non-cetak */
+            .no-print, header, main, footer, #toast-container {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            /* Setelan ukuran kertas A4 dengan margin atas 1cm dan sisi lain 0,5cm sesuai permintaan */
+            @page {
+                size: A4;
+                margin: 1cm 0.5cm 0.5cm 0.5cm;
+            }
+            #print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                z-index: 9999999 !important;
+            }
+            /* Memaksa cetakan kelas muat dalam lembar halaman A4 terpisah */
+            .print-page {
+                display: block !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                width: 100% !important;
+                height: 28.2cm !important; /* Tinggi kertas A4 setelah dikurangi total margin atas-bawah */
+                box-sizing: border-box !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                overflow: hidden !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
+        /* ========== Styling Enhancements ========== */
+
+        /* 1. Custom Scrollbar Styling */
+        .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 2. Card Hover Effects */
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+
+        /* 3. Animated Gradient Header */
+        .header-gradient {
+            background: linear-gradient(-45deg, #1e3a5f, #1e40af, #0f766e, #164e63);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 4. Button Pulse Animation (shimmer) */
+        .btn-pulse { position: relative; overflow: hidden; }
+        .btn-pulse::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 5. Toast Slide-in Animation Enhancement */
+        .toast-enter { animation: toastSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%) scale(0.8); opacity: 0; }
+            to { transform: translateX(0) scale(1); opacity: 1; }
+        }
+
+        /* 6. Stats Card Glow Effect */
+        .stats-glow {
+            box-shadow: 0 0 30px rgba(30, 58, 138, 0.3), 0 0 60px rgba(30, 58, 138, 0.1);
+            animation: statsPulse 3s ease-in-out infinite alternate;
+        }
+        @keyframes statsPulse {
+            from { box-shadow: 0 0 20px rgba(30, 58, 138, 0.2), 0 0 40px rgba(30, 58, 138, 0.05); }
+            to { box-shadow: 0 0 30px rgba(30, 58, 138, 0.4), 0 0 60px rgba(30, 58, 138, 0.15); }
+        }
+
+        /* 7. Smooth Focus Ring */
+        .focus-ring:focus { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+
+        /* 8. Dropzone Drag Active State */
+        .dropzone-active { border-color: #3b82f6 !important; background: rgba(59, 130, 246, 0.05) !important; transform: scale(1.01); }
+
+        /* 9. Tab Active Indicator */
+        .tab-active { position: relative; }
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: #1e40af;
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* 10. Loading Spinner */
+        .loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.85);
+            display: flex; align-items: center; justify-content: center; z-index: 99999;
+            backdrop-filter: blur(4px);
+        }
+        .spinner { width: 48px; height: 48px; border: 4px solid #e2e8f0; border-top-color: #1e40af; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 11. Enhanced Footer with Gradient */
+        .footer-enhanced {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            border-top: 1px solid rgba(148, 163, 184, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .footer-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        }
+
+        /* 12. Comparison Table Styling */
+        .comparison-table th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .comparison-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        .comparison-table tbody tr:hover {
+            background-color: #f1f5f9 !important;
+        }
+        .gender-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            background: #e2e8f0;
+        }
+        .gender-bar .boys-bar {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            height: 100%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gender-bar .girls-bar {
+            background: linear-gradient(90deg, #ec4899, #db2777);
+            height: 100%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 13. Insight Card Hover */
+        .insight-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.03), transparent);
+            transition: left 0.5s ease;
+        }
+        .insight-card:hover::before {
+            left: 100%;
+        }
+        .insight-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 14. Manual Entry Panel Animation */
+        .manual-panel-enter {
+            animation: panelSlideDown 0.3s ease forwards;
+        }
+        @keyframes panelSlideDown {
+            from { opacity: 0; max-height: 0; transform: translateY(-8px); }
+            to { opacity: 1; max-height: 400px; transform: translateY(0); }
+        }
+
+        /* 15. Student Row Hover Highlight */
+        .student-row-highlight {
+            transition: all 0.15s ease;
+        }
+        .student-row-highlight:hover {
+            background-color: #eff6ff !important;
+            transform: scale(1.001);
+            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.08);
+        }
+
+        /* 16. Stat Number Glow (for comparison best values) */
+        .stat-best {
+            color: #059669;
+            font-weight: 800;
+            text-shadow: 0 0 8px rgba(5, 150, 105, 0.2);
+        }
+
+        /* 17. Print Comparison Table */
+        @media print {
+            .comparison-table {
+                font-size: 8px !important;
+            }
+            .comparison-table th,
+            .comparison-table td {
+                padding: 3px 5px !important;
+            }
+            .no-print-comparison {
+                display: none !important;
+            }
+        }
+
+        /* 18. Responsive Mobile Adjustments */
+        @media (max-width: 640px) {
+            .header-gradient .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            .header-gradient h1 {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* 19. Smooth Number Transition */
+        .number-transition {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .number-transition.bumped {
+            animation: numberBump 0.4s ease;
+        }
+        @keyframes numberBump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #1e40af; }
+            100% { transform: scale(1); }
+        }
+
+        /* 20. Validation Warning Banner */
+        .validation-banner {
+            background: linear-gradient(90deg, #fef3c7, #fde68a, #fef3c7);
+            background-size: 200% 100%;
+            animation: bannerShimmer 3s linear infinite;
+            border: 1px solid #f59e0b;
+        }
+        @keyframes bannerShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+/* ========== Additional Styling Phase 3 ========== */
+
+/* 21. Table Row Alternating with Gradient */
+.student-row-even {
+    background: linear-gradient(90deg, #ffffff 0%, #f8fafc 100%);
 }
 
-.date-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    margin-top: 2px;
+/* 22. Hover Scale Effect on Class Tabs */
+.class-tab-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.class-tab-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 23. Pulse Ring on Process Button */
+.btn-process-ring {
     position: relative;
 }
+.btn-process-ring::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 0.75rem;
+    border: 2px solid rgba(59, 130, 246, 0.4);
+    animation: processRing 2s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes processRing {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+}
 
-/* Pengaturan Layout Kertas */
-.page {
-    background: white;
-    margin: 0 auto 20px auto;
-    box-sizing: border-box; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+/* 24. Smooth Card Entrance Animation */
+.card-enter {
+    animation: cardEnter 0.4s ease-out;
+}
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 25. Active Config Input Glow */
+.config-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 0 12px rgba(59, 130, 246, 0.08);
+}
+
+/* 26. Badge Pop Animation */
+.badge-pop {
+    animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes badgePop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+/* 27. Wali Kelas Row Highlight on Focus */
+.wali-row-focus:focus-within {
+    border-color: #3b82f6 !important;
+    background-color: #f0f9ff !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* 28. Result Card Border Accent */
+.result-card-accent {
+    border-top: 3px solid #1e40af;
+}
+
+/* ========== Dark Mode ========== */
+html.dark body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+html.dark .bg-white,
+html.dark .bg-slate-50 {
+    background-color: #1e293b !important;
+}
+html.dark .bg-slate-100 {
+    background-color: #334155 !important;
+}
+html.dark .text-slate-800,
+html.dark .text-slate-900 {
+    color: #f1f5f9 !important;
+}
+html.dark .text-slate-700 {
+    color: #cbd5e1 !important;
+}
+html.dark .text-slate-600 {
+    color: #94a3b8 !important;
+}
+html.dark .text-slate-500 {
+    color: #64748b !important;
+}
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+    border-color: #334155 !important;
+}
+html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #334155 !important;
+}
+html.dark .shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+}
+html.dark .card-hover:hover {
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.2);
+}
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #e2e8f0 !important;
+}
+html.dark .bg-slate-50\/50 {
+    background-color: rgba(30,41,59,0.5) !important;
+}
+html.dark .hover\:bg-slate-50:hover {
+    background-color: #334155 !important;
+}
+html.dark .stats-glow {
+    box-shadow: 0 0 30px rgba(30, 58, 138, 0.5), 0 0 60px rgba(30, 58, 138, 0.2);
+}
+html.dark .toast-enter {
+    /* keep light toast in dark mode for readability */
+}
+html.dark #toast-container > div {
+    border-color: #475569 !important;
+}
+/* Dark mode table styling */
+html.dark table thead {
+    background-color: #1e293b !important;
+}
+html.dark table thead th {
+    color: #94a3b8 !important;
+}
+html.dark table tbody tr:hover {
+    background-color: #334155 !important;
+}
+/* Dark mode config input background */
+html.dark .config-input,
+html.dark .class-wali-input,
+html.dark .class-nip-input,
+html.dark .class-type-select {
+    background-color: #334155 !important;
+    border-color: #475569 !important;
+    color: #e2e8f0 !important;
+}
+/* Dark mode scrollbar */
+html.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+html.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+/* Dark mode dropzone */
+html.dark #dropzone {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+}
+html.dark #dropzone:hover {
+    border-color: #3b82f6 !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
+}
+/* Dark mode footer */
+html.dark .footer-enhanced {
+    background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%);
+}
+/* Smooth dark mode transition */
+html, html body, html body * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+/* Override for elements that shouldn't transition */
+html.no-transition, html.no-transition * {
+    transition: none !important;
+}
+/* Dark mode print — force ALL elements to white bg + black text when printing */
+@media print {
+    html.dark body,
+    html.dark #print-area,
+    html.dark #print-area *,
+    html.dark .print-page,
+    html.dark .print-page * {
+        background: white !important;
+        color: black !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    html.dark #print-area table thead {
+        background: #f1f5f9 !important;
+    }
+    html.dark #print-area table thead th {
+        color: #1e293b !important;
+    }
+    html.dark #print-area table tbody tr {
+        background: white !important;
+    }
+    html.dark #print-area .bg-slate-800,
+    html.dark #print-area .bg-slate-900 {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+    }
+    /* Hilangkan garis scrollbar dan dot pattern saat cetak */
+    html.dark {
+        scrollbar-width: none !important;
+        overflow: auto !important;
+    }
+    html.dark::-webkit-scrollbar {
+        display: none !important;
+    }
+}
+
+/* ========== Edit Modal ========== */
+#edit-student-modal {
+    animation: modalFadeIn 0.2s ease;
+}
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/* Action buttons subtle style */
+.student-action-btn {
+    opacity: 0.4;
+    transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+tr:hover .student-action-btn {
+    opacity: 1;
+}
+
+/* ========== Phase 4 Styling Enhancements ========== */
+
+/* 29. Subtle dot pattern background on body */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.015) 0.5px, transparent 0.5px);
+    background-size: 16px 16px;
+}
+/* Hide dot pattern during print */
+@media print {
+    body::after {
+        display: none !important;
+    }
+}
+
+/* 30. Stats panel — dark gradient preserved, text colors adjusted for readability */
+.stats-glow {
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    /* Keep the original dark gradient from HTML (bg-gradient-to-br from-blue-900 to-indigo-950) */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(30, 58, 138, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.stats-glow .text-blue-300,
+.stats-glow .text-xs {
+    color: #93c5fd !important;
+}
+.stats-glow .text-xl {
+    color: #ffffff !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+html.dark .stats-glow {
+    background: rgba(30, 41, 59, 0.85) !important;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(148, 163, 184, 0.08);
+}
+
+/* 31. Animated search input focus — gradient border shift blue→teal */
+#student-search-input {
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+#student-search-input:focus {
+    outline: none;
+    border-image: linear-gradient(135deg, #3b82f6, #14b8a6) 1;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 0 16px rgba(20, 184, 166, 0.1);
+}
+
+/* 32. Table row stagger entrance */
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+tr[data-searchable] {
+    animation: fadeInLeft 0.35s ease both;
+}
+tr[data-searchable]:nth-child(1) { animation-delay: 0.02s; }
+tr[data-searchable]:nth-child(2) { animation-delay: 0.04s; }
+tr[data-searchable]:nth-child(3) { animation-delay: 0.06s; }
+tr[data-searchable]:nth-child(4) { animation-delay: 0.08s; }
+tr[data-searchable]:nth-child(5) { animation-delay: 0.10s; }
+tr[data-searchable]:nth-child(6) { animation-delay: 0.12s; }
+tr[data-searchable]:nth-child(7) { animation-delay: 0.14s; }
+tr[data-searchable]:nth-child(8) { animation-delay: 0.16s; }
+tr[data-searchable]:nth-child(9) { animation-delay: 0.18s; }
+tr[data-searchable]:nth-child(10) { animation-delay: 0.20s; }
+tr[data-searchable]:nth-child(n+11) { animation-delay: 0.22s; }
+
+/* 33. Enhanced comparison insight cards — colored left border + bg gradient */
+.insight-card {
+    border-left: 4px solid transparent;
+    border-image: linear-gradient(180deg, #3b82f6, #14b8a6) 1;
+    background: linear-gradient(135deg, #f8fafc, #f0f9ff, #f0fdfa);
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+html.dark .insight-card {
+    background: linear-gradient(135deg, #1e293b, #1a2744, #162a2a);
+}
+
+/* 34. Better empty state — floating circles animated background */
+#main-state-card {
+    position: relative;
+    overflow: hidden;
+}
+#main-state-card::before,
+#main-state-card::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.06;
+    pointer-events: none;
+}
+#main-state-card::before {
+    width: 120px;
+    height: 120px;
+    top: 10%;
+    right: 10%;
+    background: #3b82f6;
+    animation: floatCircle 8s ease-in-out infinite;
+}
+#main-state-card::after {
+    width: 80px;
+    height: 80px;
+    bottom: 15%;
+    left: 8%;
+    background: #14b8a6;
+    animation: floatCircle 10s ease-in-out infinite reverse;
+}
+@keyframes floatCircle {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-18px) scale(1.08); }
+}
+
+/* 35. Toast auto-dismiss progress bar */
+.toast-enter {
+    position: relative;
+    overflow: hidden;
+}
+.toast-enter::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, #3b82f6, #14b8a6);
+    animation: toastProgress 4s linear forwards;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+@keyframes toastProgress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* 36. Wali kelas config rows — left accent bar */
+.wali-row-focus {
+    border-left: 3px solid #3b82f6;
+    padding-left: 0.75rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* 37. Dropzone enhanced — marching ants dashed border animation */
+.dropzone-marching-ants {
+    background-image: repeating-linear-gradient(
+        90deg,
+        #3b82f6 0px,
+        #3b82f6 8px,
+        transparent 8px,
+        transparent 16px
+    );
+    background-size: 16px 2px;
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    animation: marchingAnts 0.8s linear infinite;
+    padding-bottom: 2px;
+}
+@keyframes marchingAnts {
+    from { background-position: 0 100%; }
+    to { background-position: 16px 100%; }
+}
+
+/* 38. Button group active state — subtle scale + shadow */
+.tab-active {
+    transform: scale(1.05);
+    box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1);
+    z-index: 2;
+}
+
+/* 39. Student table header — sticky with blur backdrop */
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    background: rgba(255, 255, 255, 0.85) !important;
+}
+html.dark thead {
+    background: rgba(30, 41, 59, 0.85) !important;
+}
+
+/* 40. Class tab badge animation — bounce with scale overshoot */
+.badge-pop {
+    animation: badgeBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes badgeBounce {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.25); }
+    80% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+/* 41. Print improvements — compact header + border */
+@media print {
+    header {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+        min-height: auto !important;
+    }
+    header .container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    header h1 {
+        font-size: 0.75rem !important;
+    }
+    header {
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+}
+
+/* 42. Mobile improvements — stacked grid, reduced padding, horizontal scroll tabs */
+@media (max-width: 768px) {
+    .grid-dashboard {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    main {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    .class-tabs-scroll {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        gap: 0.5rem;
+        padding-bottom: 0.25rem;
+    }
+    .class-tabs-scroll::-webkit-scrollbar {
+        display: none;
+    }
+    .class-tabs-scroll > * {
+        scroll-snap-align: start;
+        flex-shrink: 0;
+    }
+}
+
+/* 43. Smooth thin scrollbar for the whole page */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+html::-webkit-scrollbar {
+    width: 6px;
+}
+html::-webkit-scrollbar-track {
+    background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+html::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+html.dark {
+    scrollbar-color: #475569 transparent;
+}
+html.dark::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+html.dark::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* ========== Phase 5 Styling Enhancements ========== */
+
+/* 44. Tooltip styling — dark rounded card with left-pointing arrow */
+#student-tooltip {
+    background: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    position: relative;
+    z-index: 50;
+}
+#student-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #334155;
+}
+
+/* 45. Move student modal — scale-in with opacity fade */
+#move-student-modal > div {
+    animation: modalScaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes modalScaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* 46. "Susun Ulang" button — subtle amber glow pulse */
+#btn-quick-redistribute {
+    animation: amberGlowPulse 2.5s ease-in-out infinite;
+}
+@keyframes amberGlowPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    50% { box-shadow: 0 0 16px 4px rgba(245, 158, 11, 0.3); }
+}
+
+/* 47. Keyboard shortcut hints — pill badge kbd style */
+.shortcut-hint {
+    display: inline-block;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10px;
+    line-height: 1.4;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: #475569;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* 48. Wali kelas row alternating */
+.wali-row-even {
+    background-color: #f8fafc;
+}
+.wali-row-odd {
+    background-color: #ffffff;
+}
+html.dark .wali-row-even {
+    background-color: #1e293b !important;
+}
+html.dark .wali-row-odd {
+    background-color: #0f172a !important;
+}
+
+/* 49. Active class tab glow — blue bottom shadow */
+.tab-active {
+    box-shadow: 0 4px 8px -2px rgba(59, 130, 246, 0.4);
+}
+
+/* 50. Seating chart desk hover — lift + brighter border */
+.desk-pair {
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.desk-pair:hover {
+    transform: translateY(-3px);
+    border-color: #93c5fd !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
+}
+
+/* 51. Stats panel number color coding */
+#stat-total-students {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+#stat-boys {
+    color: #3b82f6;
+}
+#stat-girls {
+    color: #ec4899;
+}
+
+/* 52. Dropzone loaded success state */
+.dropzone-loaded {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.05) !important;
+}
+
+/* 53. Empty state card image — gentle float animation */
+#main-state-card img {
+    animation: emptyStateFloat 3s ease-in-out infinite;
+}
+@keyframes emptyStateFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* 54. Print — hide action buttons column */
+@media print {
+    .no-print-action {
+        display: none !important;
+    }
+}
+
+/* 55. Dark mode tooltip */
+html.dark #student-tooltip {
+    background: #1e293b;
+    border-color: #334155;
+}
+html.dark #student-tooltip::before {
+    border-right-color: #475569;
+}
+
+/* ========== Phase 6 Styling Enhancements ========== */
+
+/* 56. Animated Gradient Text on Header Title */
+.header-gradient h1 {
+    background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6, #10b981);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientTextShift 4s ease infinite;
+}
+@keyframes gradientTextShift {
+    0% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+    100% { background-position: 0% center; }
+}
+
+/* 57. Layered Double Shadow on Cards */
+.card-hover:hover {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06), 0 16px 32px -8px rgba(0,0,0,0.08);
+}
+
+/* 58. Button Ripple Effect */
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
+}
+@keyframes rippleEffect {
+    0% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* 59. Glassmorphism on Mode Toggle Container */
+.mode-toggle-glass {
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    background: rgba(241, 245, 249, 0.6);
+    border: 1px solid rgba(203, 213, 225, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+html.dark .mode-toggle-glass {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(71, 85, 105, 0.5);
+}
+
+/* 60. Pulsing Online Dot on Firebase Status */
+#firebase-status .animate-pulse {
+    position: relative;
+}
+#firebase-status .animate-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid #34d399;
+    animation: pulseRing 1.5s ease-out infinite;
+    pointer-events: none;
+}
+@keyframes pulseRing {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* 61. Class Tab Type Color Indicators */
+.class-tab-btn[data-type="akademik"] {
+    border-left: 3px solid #f59e0b;
+}
+.class-tab-btn[data-type="prestasi"] {
+    border-left: 3px solid #8b5cf6;
+}
+.class-tab-btn[data-type="reguler"] {
+    border-left: 3px solid #10b981;
+}
+html.dark .class-tab-btn[data-type="akademik"] {
+    border-left-color: #f59e0b;
+}
+html.dark .class-tab-btn[data-type="prestasi"] {
+    border-left-color: #8b5cf6;
+}
+html.dark .class-tab-btn[data-type="reguler"] {
+    border-left-color: #10b981;
+}
+
+/* 62. Enhanced Wali Kelas Row Accordion */
+.wali-row-focus {
+    position: relative;
+}
+.wali-row-focus::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #3b82f6;
+    border-radius: 0 2px 2px 0;
+    transition: width 0.25s ease, background-color 0.25s ease;
+}
+.wali-row-focus:focus-within::before {
+    width: 5px;
+    background: #2563eb;
+}
+
+/* 63. Animated Mesh/Gradient Background on Empty State */
+#main-state-card {
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+    background-size: 200% 200%, 200% 200%, 200% 200%;
+    animation: meshMove 12s ease-in-out infinite;
+}
+@keyframes meshMove {
+    0% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+    33% { background-position: 100% 50%, 0% 100%, 100% 0%; }
+    66% { background-position: 50% 100%, 50% 0%, 0% 50%; }
+    100% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+}
+
+/* 64. Better Search Input Styling */
+#student-search-input {
+    transition: all 0.3s ease;
+}
+#student-search-input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), inset 0 2px 4px rgba(59, 130, 246, 0.06);
+}
+
+/* 65. Action Button Hover Micro-interactions */
+.student-action-btn {
+    transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.student-action-btn:hover {
+    transform: scale(1.15);
+}
+button[title="Edit Siswa"]:hover {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+    background-color: rgba(59, 130, 246, 0.1);
+}
+button[title="Pindahkan Kelas"]:hover {
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    background-color: rgba(245, 158, 11, 0.1);
+}
+button[title="Hapus Siswa"]:hover {
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+    background-color: rgba(244, 63, 94, 0.1);
+}
+
+/* 66. Table Row Selected State */
+tr.row-selected {
+    background-color: #eff6ff !important;
+    border-left: 3px solid #3b82f6;
+    box-shadow: inset 3px 0 0 #3b82f6;
+}
+html.dark tr.row-selected {
+    background-color: rgba(30, 58, 138, 0.2) !important;
+}
+
+/* 67. Improved Mobile Responsive for Cards */
+@media (max-width: 640px) {
+    .card-hover:hover {
+        transform: none;
+    }
+    #quick-stats {
+        width: 100%;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+    .result-card-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .result-card-actions button,
+    .result-card-actions a {
+        width: 100%;
+    }
+    .class-tabs-scroll {
+        scroll-snap-type: x mandatory;
+    }
+    .class-tabs-scroll > * {
+        scroll-snap-align: center;
+    }
+}
+
+/* 68. Confetti Particle Styles */
+.confetti-particle {
+    position: fixed;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 999999;
+    opacity: 0.9;
+}
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-10px) rotateX(0deg) rotateY(0deg);
+        opacity: 1;
+    }
+    75% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(100vh) rotateX(720deg) rotateY(360deg);
+        opacity: 0;
+    }
+}
+.confetti-particle:nth-child(3n) { animation-duration: 2.5s; }
+.confetti-particle:nth-child(3n+1) { animation-duration: 3.2s; }
+.confetti-particle:nth-child(3n+2) { animation-duration: 1.8s; }
+
+/* 69. Print Preview Modal Styles */
+.print-preview-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 999998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.print-preview-modal > div {
+    animation: previewSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 90vw;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
 }
-.header-section { margin-bottom: 2rem; }
-.header-section h4 { display: block; width: 100%; padding: 6px 0; margin-top: 10px; }
-
-/* ---------------------------------------------------
-   Mode PORTRAIT
-   --------------------------------------------------- */
-.portrait .month-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; flex-grow: 1;
+@keyframes previewSlideUp {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
-.portrait .calendar-table td { height: 40px; padding: 4px 2px; width: 14.28%; }
-.portrait .date-number { width: 24px; height: 24px; line-height: 24px; }
-.portrait .legend-grid { grid-template-columns: repeat(2, 1fr); }
-
-.portrait .footer-container { display: flex; gap: 1rem; margin-top: 1.5rem; }
-.portrait .legend-container { flex-grow: 1; }
-.portrait .ttd-section { width: 16rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-.portrait .signature-space { margin-top: 4.5rem; }
-
-/* ---------------------------------------------------
-   Mode LANDSCAPE
-   --------------------------------------------------- */
-.landscape .month-grid {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; flex-grow: 1;
+.print-preview-content {
+    overflow-y: auto;
+    padding: 1rem;
+    flex: 1;
 }
-.landscape .calendar-table th { font-size: 0.65rem; padding: 2px 1px; }
-.landscape .calendar-table td { height: 26px; padding: 1px; font-size: 0.65rem; }
-.landscape .date-number { width: 18px; height: 18px; font-size: 0.65rem; }
-.landscape .header-section h1 { font-size: 1.25rem; }
-.landscape .header-section h2 { font-size: 1rem; }
-.landscape .header-section h3 { font-size: 0.85rem; }
-.landscape .header-section h4 { font-size: 0.85rem; }
-.landscape .legend-grid { grid-template-columns: repeat(3, 1fr); gap: 4px; } 
-
-/* PERBAIKAN: Layout Bawah untuk Landscape (Float) */
-.landscape .footer-container { 
-    display: block; 
-    margin-top: 1rem; 
+.print-preview-page {
+    width: 100%;
+    max-width: 595px;
+    aspect-ratio: 210 / 297;
+    background: white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    margin: 0 auto;
+    overflow: hidden;
+    transform-origin: top center;
 }
-.landscape .legend-container { 
-    float: left; 
-    width: calc(100% - 19rem); /* Memberi ruang untuk tanda tangan */
-    margin-bottom: 0;
+html.dark .print-preview-modal {
+    background: rgba(2, 6, 23, 0.8);
 }
-.landscape .ttd-section { 
-    float: right; 
-    width: 18rem; 
-    text-align: center; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between;
+html.dark .print-preview-modal > div {
+    background: #1e293b;
 }
-.landscape .signature-space { margin-top: 4rem; } 
-/* Clearfix untuk float */
-.landscape .footer-container::after { 
-    content: ""; clear: both; display: table; 
-}
-
-/* ---------------------------------------------------
-   Mode CETAK (Print)
-   --------------------------------------------------- */
 @media print {
-    body, html { height: auto !important; overflow: visible !important; background-color: white !important; }
-    #control-panel, #cloud-status { display: none !important; }
-    #preview-container { height: auto !important; overflow: visible !important; display: block !important; padding: 0 !important; }
-    .page { box-shadow: none !important; margin: 0 !important; page-break-after: always !important; break-after: page !important; }
+    .print-preview-modal {
+        display: none !important;
+    }
+}
+
+/* 70. Score Histogram Bar Styles */
+.histogram-bar-segment {
+    display: inline-block;
+    height: 18px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+}
+.histogram-legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.histogram-row:hover .histogram-bar-segment {
+    filter: brightness(1.1);
+    transform: scaleY(1.2);
+    transform-origin: bottom;
+}
+
+/* 71. Capacity Progress Bar Animation */
+.capacity-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s ease;
+    position: relative;
+}
+.capacity-bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    animation: capacityPulse 2s ease-in-out infinite;
+}
+@keyframes capacityPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+}
+.capacity-green {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+.capacity-amber {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.capacity-red {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+html.dark .capacity-green { background: linear-gradient(90deg, #059669, #10b981); }
+html.dark .capacity-amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+html.dark .capacity-red { background: linear-gradient(90deg, #dc2626, #ef4444); }
+
+/* 72. CSV Export Button Style */
+#btn-export-csv {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+    color: white;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+#btn-export-csv::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+}
+#btn-export-csv:hover {
+    background: linear-gradient(135deg, #0f766e, #0d9488);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+}
+
+/* 73. Smoother Dark Mode Transitions */
+html, html body, html body * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* 74. Enhanced Firebase Status Badge — green glow ring when online */
+#firebase-status:has(.bg-emerald-400) {
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.3), 0 0 4px rgba(52, 211, 153, 0.2);
+}
+
+/* 75. Student Table NISN Column Monospace */
+.font-mono {
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 0.05em;
 }
